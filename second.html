@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeFood AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --primary: #4CAF50;
+            --primary-hover: #45a049;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --safe: #4CAF50;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        header {
+            text-align: center;
+            padding: 24px 0 12px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+            background-color: #f8fafc;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
+            background-color: #ffffff;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        button:active {
+            transform: translateY(2px);
+        }
+
+        #result-section {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .status-safe { background-color: var(--safe); }
+        .status-moderate { background-color: var(--warning); color: #fff; }
+        .status-avoid { background-color: var(--danger); }
+
+        .reason-text {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 600px) {
+            .info-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .info-card {
+            padding: 24px;
+        }
+
+        .info-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            padding: 10px 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .info-list li::before {
+            content: "✦";
+            color: var(--primary);
+            font-weight: bold;
+            display: inline-block;
+            width: 1.5em;
+            flex-shrink: 0;
+            font-size: 0.9em;
+            margin-top: 2px;
+        }
+        
+        .icn {
+            font-size: 1.4rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>SafeFood AI 🌱</h1>
+            <p class="subtitle">Your smart food safety & allergy companion</p>
+        </header>
+
+        <div class="card">
+            <div class="form-group">
+                <label for="food-input">What are you planning to eat?</label>
+                <input type="text" id="food-input" placeholder="e.g. Peanut Butter, Apple, Chocolate Cake..." autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="condition-select">Select your health condition or goal:</label>
+                <select id="condition-select">
+                    <option value="none">General Health (No specific condition)</option>
+                    <option value="diabetes">Diabetes (Monitor Blood Sugar)</option>
+                    <option value="allergy">Allergies (Nuts, Dairy, Gluten, etc.)</option>
+                    <option value="weightloss">Weight Loss Management</option>
+                </select>
+            </div>
+
+            <button id="check-btn">Analyse Food</button>
+        </div>
+
+        <div class="card" id="result-section">
+            <div class="status-badge" id="result-badge">SAFE</div>
+            <p class="reason-text" id="result-reason">This food is perfectly safe for you.</p>
+        </div>
+
+        <div class="info-section">
+            <div class="card info-card">
+                <h3><span class="icn">🥗</span> Common Healthy Foods</h3>
+                <ul class="info-list">
+                    <li>Leafy Greens (e.g., Spinach, Kale)</li>
+                    <li>Fresh Berries (e.g., Blueberries, Raspberries)</li>
+                    <li>Nuts and Seeds (e.g., Almonds, Chia Seeds)</li>
+                    <li>Lean Proteins (e.g., Grilled Chicken, Tofu)</li>
+                    <li>Whole Grains (e.g., Quinoa, Oats)</li>
+                </ul>
+            </div>
+            
+            <div class="card info-card">
+                <h3><span class="icn">💡</span> Quick Health Tips</h3>
+                <ul class="info-list">
+                    <li>Stay hydrated! Drink at least 8 glasses of water a day.</li>
+                    <li>Read food labels to expose hidden sugars and unhealthy fats.</li>
+                    <li>Chew your food thoroughly for better digestion.</li>
+                    <li>Always include a source of protein in every meal.</li>
+                    <li>Avoid eating large, heavy meals right before bedtime.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkBtn = document.getElementById('check-btn');
+            const foodInput = document.getElementById('food-input');
+            const conditionSelect = document.getElementById('condition-select');
+            const resultSection = document.getElementById('result-section');
+            const resultBadge = document.getElementById('result-badge');
+            const resultReason = document.getElementById('result-reason');
+
+            // Simple mock knowledge base of food keywords constraints
+            const foodRules = {
+                diabetes: {
+                    avoid: ['sugar', 'cake', 'candy', 'soda', 'sweet', 'chocolate', 'syrup', 'pastry', 'cookie', 'juice'],
+                    moderate: ['rice', 'bread', 'potato', 'pasta', 'banana', 'mango', 'grapes', 'noodle']
+                },
+                allergy: {
+                    avoid: ['peanut', 'nut', 'milk', 'cheese', 'dairy', 'wheat', 'gluten', 'shellfish', 'shrimp', 'crab', 'soy', 'almond', 'pecan']
+                },
+                weightloss: {
+                    avoid: ['fried', 'burger', 'pizza', 'fries', 'chips', 'cake', 'ice cream', 'bacon', 'mayo', 'sausage', 'donut'],
+                    moderate: ['cheese', 'nuts', 'avocado', 'beef', 'pork', 'pasta']
+                }
+            };
+
+            checkBtn.addEventListener('click', () => {
+                const food = foodInput.value.trim().toLowerCase();
+                const condition = conditionSelect.value;
+
+                if (!food) {
+                    alert("Please enter a food name to check.");
+                    return;
+                }
+
+                let status = 'safe';
+                let reason = 'This food appears safe and fits well with your selected health profile.';
+                let badgeClass = 'status-safe';
+                let badgeText = 'SAFE';
+
+                if (condition !== 'none' && foodRules[condition]) {
+                    const rules = foodRules[condition];
+                    
+                    // Check Avoid List
+                    const isAvoid = rules.avoid?.some(keyword => food.includes(keyword));
+                    if (isAvoid) {
+                        status = 'avoid';
+                        badgeClass = 'status-avoid';
+                        badgeText = 'AVOID';
+                        
+                        if (condition === 'diabetes') reason = 'Contains high sugar or simple carbs which can rapidly spike blood sugar levels.';
+                        else if (condition === 'allergy') reason = 'Contains common allergens related to your requested profile.';
+                        else if (condition === 'weightloss') reason = 'High in calories, unhealthy fats, or refined carbs. Not ideal for shedding weight.';
+                    } else {
+                        // Check Moderate List
+                        const isModerate = rules.moderate?.some(keyword => food.includes(keyword));
+                        if (isModerate) {
+                            status = 'moderate';
+                            badgeClass = 'status-moderate';
+                            badgeText = 'MODERATE';
+                            
+                            if (condition === 'diabetes') reason = 'Contains carbs that should be consumed in moderation and optionally paired with fiber/protein.';
+                            else if (condition === 'weightloss') reason = 'Calorie-dense or contains fats/carbs to watch out for. Make sure to eat smaller portions.';
+                        }
+                    }
+                } else if (condition === 'none') {
+                    // General advice for 'none'
+                    if (['sugar', 'fried', 'cake', 'candy', 'soda', 'burger', 'pizza'].some(k => food.includes(k))) {
+                         status = 'moderate';
+                         badgeClass = 'status-moderate';
+                         badgeText = 'MODERATE';
+                         reason = 'While generally okay for people without restrictions, this item is best consumed in moderation for optimal health.';
+                    }
+                }
+
+                // Update UI Elements
+                resultBadge.className = `status-badge ${badgeClass}`;
+                resultBadge.textContent = badgeText;
+                resultReason.textContent = reason;
+                
+                // Show result block
+                resultSection.style.display = 'block';
+                
+                // Re-trigger CSS animation
+                resultSection.style.animation = 'none';
+                void resultSection.offsetWidth; /* trigger reflow */
+                resultSection.style.animation = null;
+            });
+
+            // Allow pressing Enter key to check
+            foodInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    checkBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
